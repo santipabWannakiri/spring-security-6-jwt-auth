@@ -13,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.Set;
 
 @Service
@@ -68,7 +69,7 @@ public class UtilityServiceImp implements UtilityService, CommandLineRunner {
             superAccount.setUsername("super");
             superAccount.setEmail("superadmin@gmail.com");
             superAccount.setPassword(passwordEncoder.encode("zxcv123456"));
-            superAccount.setRoles(Set.of(superAdminRole));
+            superAccount.setRoles(Set.of(superAdminRole, adminRole));
             superAccount.setIsActive(true);
             userRepository.save(superAccount);
 
@@ -101,6 +102,19 @@ public class UtilityServiceImp implements UtilityService, CommandLineRunner {
                 + "    \"code\": \"" + code + "\",\r\n"
                 + "    \"msgCode\": \"" + msgCode + "\",\r\n"
                 + "    \"reason\": \"" + reason + "\"\r\n"
+                + "}";
+        return response;
+    }
+
+    @Override
+    public String jwtResponseMessageMapping(String code, String msgCode, String token, Date expire) {
+        String response = "{\r\n"
+                + "    \"code\": \"" + code + "\",\r\n"
+                + "    \"msgCode\": \"" + msgCode + "\",\r\n"
+                + "\"data\": {"
+                + "\"token\": \"" + token + "\",\r\n"
+                + "\"expiresIn\": \"" + expire + "\"\r\n"
+                + "}"
                 + "}";
         return response;
     }

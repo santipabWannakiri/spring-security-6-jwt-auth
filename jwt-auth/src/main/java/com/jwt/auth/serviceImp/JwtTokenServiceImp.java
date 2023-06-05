@@ -3,12 +3,14 @@ package com.jwt.auth.serviceImp;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
+import com.jwt.auth.model.Role;
 import com.jwt.auth.service.JwtTokenService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -24,7 +26,8 @@ public class JwtTokenServiceImp implements JwtTokenService {
 
 
     @Override
-    public String generateToken(String userName, String role) {
+    public Map<String,Object> generateToken(String userName, List<String> role) {
+        Map<String,Object> tokenObject = new HashMap<>();
         String token = null;
         long currentTimeMillis = System.currentTimeMillis();
         Date expirationDate = new Date(currentTimeMillis + expirationTimeMillis);
@@ -50,7 +53,11 @@ public class JwtTokenServiceImp implements JwtTokenService {
         } catch (JWTCreationException exception) {
             System.out.println(exception.getMessage());
         }
-        return token;
+        tokenObject.put("currentTime", new Date(currentTimeMillis));
+        tokenObject.put("expiresIn", expirationDate);
+        tokenObject.put("token", token);
+
+        return tokenObject;
     }
 
 
