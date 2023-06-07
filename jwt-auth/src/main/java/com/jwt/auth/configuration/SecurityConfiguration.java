@@ -1,5 +1,6 @@
 package com.jwt.auth.configuration;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -8,6 +9,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import static org.springframework.http.HttpMethod.*;
@@ -15,6 +17,9 @@ import static org.springframework.http.HttpMethod.*;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
+
+    @Autowired
+    private JwtAuthenticationFilter JwtAuthenticationFilter;
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
        http.csrf((csrf) -> csrf.disable());
@@ -30,8 +35,9 @@ public class SecurityConfiguration {
                         .requestMatchers("/api/super").access(AuthorizationManagers.allOf(AuthorityAuthorizationManager.hasRole("ADMIN"), AuthorityAuthorizationManager.hasRole("SUPER_ADMIN")))
                         .requestMatchers("/api/admin").hasRole("ADMIN")*/
                         .anyRequest().denyAll())
-                .headers(headers -> headers.frameOptions(frameOptionsConfig -> frameOptionsConfig.disable()))
-                .httpBasic(Customizer.withDefaults());
+                .headers(headers -> headers.frameOptions(frameOptionsConfig -> frameOptionsConfig.disable()));
+                http.addFilterBefore(JwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                //.httpBasic(Customizer.withDefaults());
         return http.build();
     }
 
