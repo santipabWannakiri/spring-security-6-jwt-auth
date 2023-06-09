@@ -45,17 +45,17 @@ public class UserController {
             List<String> errorMessages = result.getFieldErrors().stream()
                     .map(error -> error.getField() + ": " + error.getDefaultMessage())
                     .collect(Collectors.toList());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(utilityService.normalMessageMapping("0300", "INVALID_FORMAT", errorMessages.get(0)));
+            return utilityService.generateResponseMessage(HttpStatus.BAD_REQUEST, "0300", "INVALID_FORMAT", errorMessages.get(0));
         } else {
             User existingUser = userService.findByUser(userInfo.getUsername());
             if (existingUser != null) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body(utilityService.normalMessageMapping("6600", "DUPLICATE", "Username already registered"));
+                return utilityService.generateResponseMessage(HttpStatus.CONFLICT, "6600", "NOT_FOUND", "User not found");
             } else {
                 User createdUser = userService.createUser(userInfo);
                 if (createdUser != null) {
-                    return ResponseEntity.status(HttpStatus.OK).body(utilityService.normalMessageMapping("0100", "SUCCESS", "Registered successfully"));
+                    return utilityService.generateResponseMessage(HttpStatus.OK, "0100", "SUCCESS", "Registered successfully");
                 } else {
-                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(utilityService.normalMessageMapping("0300", "FAILURE", "Unable to register. Please check your connection and try again."));
+                    return utilityService.generateResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR, "0300", "FAILURE", "Unable to register. Please check your connection and try again.");
                 }
             }
         }
@@ -66,18 +66,18 @@ public class UserController {
     public ResponseEntity<String> login(@RequestBody @Valid UserCredentials credentials, BindingResult result) {
         if (result.hasErrors()) {
             List<String> errorMessages = result.getFieldErrors().stream().map(error -> error.getField() + " : " + error.getDefaultMessage()).collect(Collectors.toList());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(utilityService.normalMessageMapping("0300", "INVALID_FORMAT", errorMessages.get(0)));
+            return utilityService.generateResponseMessage(HttpStatus.BAD_REQUEST, "0300", "INVALID_FORMAT", errorMessages.get(0));
         } else {
             User existingUser = userService.findByUser(credentials.getUsername());
             if (existingUser == null) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body(utilityService.normalMessageMapping("6600", "NOT_FOUND", "User not found"));
+                return utilityService.generateResponseMessage(HttpStatus.CONFLICT, "6600", "NOT_FOUND", "User not found");
             } else {
                 List<String> roleList = new ArrayList<>();
                 for (Role role : existingUser.getRoles()) {
                     roleList.add(role.getName());
                 }
                 Map<String, Object> tokenObject = jwtTokenService.generateToken(existingUser.getUsername(), roleList);
-                return ResponseEntity.status(HttpStatus.OK).body(utilityService.jwtResponseMessageMapping("0100", "SUCCESS", (String) tokenObject.get("token"), (Date) tokenObject.get("expiresIn")));
+                return utilityService.generateJwtTokenResponseMessage(HttpStatus.OK, "0100", "SUCCESS", (String) tokenObject.get("token"), (Date) tokenObject.get("expiresIn"));
             }
         }
 

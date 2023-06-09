@@ -6,12 +6,19 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.jwt.auth.model.Role;
+import com.jwt.auth.model.ReponseObject;
 import com.jwt.auth.service.JwtTokenService;
+import com.jwt.auth.service.UtilityService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +26,9 @@ import java.util.Map;
 
 @Service
 public class JwtTokenServiceImp implements JwtTokenService {
+    @Autowired
+    private UtilityService utilityService;
+
     @Value("${jwt-auth.secretKey}")
     private String secretKey;
     @Value("${jwt-auth.issuer}")
@@ -54,8 +64,10 @@ public class JwtTokenServiceImp implements JwtTokenService {
                     .sign(algorithm);
         } catch (IllegalArgumentException exception) {
             System.out.println(exception.getMessage());
+            utilityService.generateResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR, "0300", "FAILURE", "Failed to create JWT token.");
         } catch (JWTCreationException exception) {
-            System.out.println(exception.getMessage());
+            ResponseEntity<String> responseEntity = utilityService.generateResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR, "0300", "FAILURE", "Failed to create JWT token.");
+            throw new ResponseStatusException(responseEntity.getStatusCode(), responseEntity.getBody());
         }
         tokenObject.put("currentTime", new Date(currentTimeMillis));
         tokenObject.put("expiresIn", expirationDate);
@@ -65,8 +77,11 @@ public class JwtTokenServiceImp implements JwtTokenService {
     }
 
     @Override
-    public String extractTokenFromRequest(HttpServletRequest request) {
+    public String extractTokenFromRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String authorizationHeader = request.getHeader("Authorization");
+        if (authorizationHeader == null) {
+            return null;
+        }
         return authorizationHeader.substring("Bearer ".length());
     }
 
