@@ -4,6 +4,9 @@ package com.jwt.auth.controller;
 import com.jwt.auth.model.Role;
 import com.jwt.auth.model.User;
 import com.jwt.auth.model.UserCredentials;
+import com.jwt.auth.model.json.response.JsonResponse;
+import com.jwt.auth.model.json.response.JwtData;
+import com.jwt.auth.model.json.response.JwtTokenResponse;
 import com.jwt.auth.service.JwtTokenService;
 import com.jwt.auth.service.UserService;
 import com.jwt.auth.service.UtilityService;
@@ -40,22 +43,22 @@ public class UserController {
 
     @PostMapping(value = "/reg", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<String> registerUser(@RequestBody @Valid User userInfo, BindingResult result) {
+    public ResponseEntity<JsonResponse> registerUser(@RequestBody @Valid User userInfo, BindingResult result) {
         if (result.hasErrors()) {
             List<String> errorMessages = result.getFieldErrors().stream()
                     .map(error -> error.getField() + ": " + error.getDefaultMessage())
                     .collect(Collectors.toList());
-            return utilityService.generateResponseMessage(HttpStatus.BAD_REQUEST, "0300", "INVALID_FORMAT", errorMessages.get(0));
+            return utilityService.entityResponseMessage(HttpStatus.BAD_REQUEST, new JsonResponse("0300", "INVALID_FORMAT", errorMessages.get(0)));
         } else {
             User existingUser = userService.findByUser(userInfo.getUsername());
             if (existingUser != null) {
-                return utilityService.generateResponseMessage(HttpStatus.CONFLICT, "6600", "NOT_FOUND", "User not found");
+                return utilityService.entityResponseMessage(HttpStatus.CONFLICT, new JsonResponse("6600", "NOT_FOUND", "User not found"));
             } else {
                 User createdUser = userService.createUser(userInfo);
                 if (createdUser != null) {
-                    return utilityService.generateResponseMessage(HttpStatus.OK, "0100", "SUCCESS", "Registered successfully");
+                    return utilityService.entityResponseMessage(HttpStatus.OK, new JsonResponse("0100", "SUCCESS", "Registered successfully"));
                 } else {
-                    return utilityService.generateResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR, "0300", "FAILURE", "Unable to register. Please check your connection and try again.");
+                    return utilityService.entityResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR, new JsonResponse("0300", "FAILURE", "Unable to register. Please check your connection and try again."));
                 }
             }
         }
@@ -63,21 +66,25 @@ public class UserController {
 
     @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<String> login(@RequestBody @Valid UserCredentials credentials, BindingResult result) {
+    public ResponseEntity<?> login(@RequestBody @Valid UserCredentials credentials, BindingResult result) {
         if (result.hasErrors()) {
             List<String> errorMessages = result.getFieldErrors().stream().map(error -> error.getField() + " : " + error.getDefaultMessage()).collect(Collectors.toList());
-            return utilityService.generateResponseMessage(HttpStatus.BAD_REQUEST, "0300", "INVALID_FORMAT", errorMessages.get(0));
+            return utilityService.entityResponseMessage(HttpStatus.BAD_REQUEST, new JsonResponse("0300", "INVALID_FORMAT", errorMessages.get(0)));
+
         } else {
             User existingUser = userService.findByUser(credentials.getUsername());
             if (existingUser == null) {
-                return utilityService.generateResponseMessage(HttpStatus.CONFLICT, "6600", "NOT_FOUND", "User not found");
+                return utilityService.entityResponseMessage(HttpStatus.CONFLICT, new JsonResponse("6600", "NOT_FOUND", "User not found"));
             } else {
                 List<String> roleList = new ArrayList<>();
                 for (Role role : existingUser.getRoles()) {
                     roleList.add(role.getName());
                 }
                 Map<String, Object> tokenObject = jwtTokenService.generateToken(existingUser.getUsername(), roleList);
-                return utilityService.generateJwtTokenResponseMessage(HttpStatus.OK, "0100", "SUCCESS", (String) tokenObject.get("token"), (Date) tokenObject.get("expiresIn"));
+                if (tokenObject == null) {
+                    return utilityService.entityResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR, new JsonResponse("0300", "FAILURE", "Failed to create JWT token."));
+                }
+                return utilityService.entityJwtTokenResponseMessage(HttpStatus.OK, new JwtTokenResponse("0100", "SUCCESS", new JwtData((String) tokenObject.get("token"), (Date) tokenObject.get("expiresIn"))));
             }
         }
 

@@ -1,8 +1,7 @@
 package com.jwt.auth.configuration;
 
-import com.jwt.auth.model.ReponseObject;
+import com.jwt.auth.model.json.response.JsonResponse;
 import com.jwt.auth.service.JwtTokenService;
-import com.jwt.auth.service.UserService;
 import com.jwt.auth.service.UtilityService;
 import com.jwt.auth.serviceImp.UserSerivceImp;
 import jakarta.servlet.FilterChain;
@@ -13,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -42,12 +40,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = jwtTokenService.extractTokenFromRequest(request,response);
 
         if(token == null){
-            utilityService.sendErrorJson(response, 401, new ReponseObject("0300","INVALID_FORMAT","Authorization header not found in the request."));
+            utilityService.servletResponseMessage(response, 401, new JsonResponse("0300","INVALID_FORMAT","Authorization header not found in the request."));
             return;
         }
 
         if(jwtTokenService.validateToken(token) == false){
-            utilityService.sendErrorJson(response, 400, new ReponseObject("0300","INVALID_TOKEN","Invalid token or token has expired."));
+            utilityService.servletResponseMessage(response, 400, new JsonResponse("0300","INVALID_TOKEN","Invalid token or token has expired."));
             return;
         }
 
@@ -59,7 +57,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         }else {
-            utilityService.sendErrorJson(response, 500, new ReponseObject("0300","INTERNAL_ERROR","Unable to process request. Please try again."));
+            utilityService.servletResponseMessage(response, 500, new JsonResponse("0300","INTERNAL_ERROR","Unable to process request. Please try again."));
             return;
         }
 

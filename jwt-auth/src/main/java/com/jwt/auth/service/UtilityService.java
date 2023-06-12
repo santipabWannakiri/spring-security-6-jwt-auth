@@ -1,19 +1,18 @@
 package com.jwt.auth.service;
 
-import com.jwt.auth.model.ReponseObject;
+import com.jwt.auth.model.json.response.JsonResponse;
+import com.jwt.auth.model.json.response.JwtTokenResponse;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
-import java.util.Date;
 
 public interface UtilityService {
 
-    public ResponseEntity<String> generateResponseMessage(HttpStatusCode status, String code, String msgCode, String reason);
+    public ResponseEntity<JsonResponse> entityResponseMessage(HttpStatusCode status, JsonResponse response);
 
-    public ResponseEntity<String> generateJwtTokenResponseMessage(HttpStatusCode status, String code, String msgCode, String token, Date expire);
+    public ResponseEntity<JwtTokenResponse> entityJwtTokenResponseMessage(HttpStatusCode status, JwtTokenResponse response);
 
-    public void sendErrorJson(HttpServletResponse response, int status, ReponseObject msgResponse) throws IOException;
+    public void servletResponseMessage(HttpServletResponse response, int status, JsonResponse msgResponse) throws IOException;
 }

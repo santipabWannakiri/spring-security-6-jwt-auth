@@ -13,11 +13,8 @@ public class Token {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String tokenValue;
-
     private LocalDateTime expirationDate;
-
     private LocalDateTime creationTimestamp;
 
     @ManyToOne
