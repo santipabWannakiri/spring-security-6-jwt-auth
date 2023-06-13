@@ -16,6 +16,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+
+import static com.jwt.auth.constants.ErrorConstants.*;
+
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -40,12 +43,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = jwtTokenService.extractTokenFromRequest(request,response);
 
         if(token == null){
-            utilityService.servletResponseMessage(response, 401, new JsonResponse("0300","INVALID_FORMAT","Authorization header not found in the request."));
+            utilityService.servletResponseMessage(response, 401, new JsonResponse(INVALID_FORMAT_ERROR_CODE, INVALID_FORMAT_MESSAGE_CODE, UNABLE_EXTRACT_TOKEN_MESSAGE));
             return;
         }
 
         if(jwtTokenService.validateToken(token) == false){
-            utilityService.servletResponseMessage(response, 400, new JsonResponse("0300","INVALID_TOKEN","Invalid token or token has expired."));
+            utilityService.servletResponseMessage(response, 400, new JsonResponse(INVALID_FORMAT_ERROR_CODE, INVALID_FORMAT_MESSAGE_CODE, INVALID_OR_EXPIRE_MESSAGE));
             return;
         }
 
@@ -57,7 +60,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         }else {
-            utilityService.servletResponseMessage(response, 500, new JsonResponse("0300","INTERNAL_ERROR","Unable to process request. Please try again."));
+            utilityService.servletResponseMessage(response, 500, new JsonResponse(INTERNAL_ERROR_CODE, INTERNAL_MESSAGE_CODE, UNABLE_TO_PROCESS_MESSAGE));
             return;
         }
 

@@ -29,13 +29,13 @@ public class UtilityServiceImp implements UtilityService {
 
     @Override
     public void servletResponseMessage(HttpServletResponse response, int status, JsonResponse msgResponse) throws IOException {
-        JsonResponse reponseObject = new JsonResponse(msgResponse);
+        JsonResponse responseObject = new JsonResponse(msgResponse);
 
         response.setStatus(status);
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        response.getWriter().write(objectMapper.writeValueAsString(reponseObject));
-        // response.flushBuffer();
+        response.getWriter().write(objectMapper.writeValueAsString(responseObject));
+        response.flushBuffer();
     }
 
 

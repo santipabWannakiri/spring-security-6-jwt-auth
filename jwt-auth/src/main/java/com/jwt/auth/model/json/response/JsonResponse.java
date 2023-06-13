@@ -5,19 +5,21 @@ import lombok.Data;
 @Data
 public class JsonResponse {
 
-    private String errorCode;
-    private String messageCode;
-    private String message;
+    private String appResponseCode;
+    private String appMessageCode;
+    private String description;
 
-    public JsonResponse(String errorCode, String messageCode, String message) {
-        this.errorCode = errorCode;
-        this.messageCode = messageCode;
-        this.message = message;
+    public JsonResponse(String appResponseCode, String appMessageCode, String description) {
+        this.appResponseCode = appResponseCode;
+        this.appMessageCode = appMessageCode;
+        this.description = description;
     }
 
     public JsonResponse(JsonResponse msgResponse) {
-        this.errorCode = msgResponse.errorCode;
-        this.messageCode = msgResponse.messageCode;
-        this.message = msgResponse.message;
+        this.appResponseCode = msgResponse.appResponseCode;
+        this.appMessageCode = msgResponse.appMessageCode;
+        this.description = msgResponse.description;
     }
+
+
 }
