@@ -8,9 +8,12 @@ import java.util.Date;
 public class JwtData {
     private String token;
     private Date expiresIn;
+    private String refreshToken;
 
-    public JwtData(String token, Date expiresIn) {
+
+    public JwtData(String token, String refreshToken, Date expiresIn) {
         this.token = token;
         this.expiresIn = expiresIn;
+        this.refreshToken = refreshToken;
     }
 }

@@ -14,7 +14,7 @@ import java.util.Set;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
     @NotBlank(message = "is mandatory")
     @Size(min = 4, max = 20, message = "Username must be between 5 and 20 characters")

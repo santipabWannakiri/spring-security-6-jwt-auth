@@ -6,7 +6,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository("PrivilegeRepository")
-public interface PrivilegeRepository extends CrudRepository<Privilege, Integer> {
+public interface PrivilegeRepository extends CrudRepository<Privilege, Long> {
 
 
 }

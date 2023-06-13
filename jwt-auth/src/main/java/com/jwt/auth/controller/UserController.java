@@ -1,9 +1,7 @@
 package com.jwt.auth.controller;
 
 
-import com.jwt.auth.model.Role;
-import com.jwt.auth.model.User;
-import com.jwt.auth.model.UserCredentials;
+import com.jwt.auth.model.*;
 import com.jwt.auth.model.json.response.JsonResponse;
 import com.jwt.auth.model.json.response.JwtData;
 import com.jwt.auth.model.json.response.JwtTokenResponse;
@@ -35,6 +33,7 @@ public class UserController {
 
     @Autowired
     private JwtTokenService jwtTokenService;
+
 
     @GetMapping("/public")
     @ResponseBody
@@ -82,11 +81,16 @@ public class UserController {
                 for (Role role : existingUser.getRoles()) {
                     roleList.add(role.getName());
                 }
-                Map<String, Object> tokenObject = jwtTokenService.generateToken(existingUser.getUsername(), roleList);
-                if (tokenObject == null) {
+                Map<String, Object> accessTokenObject = jwtTokenService.generateToken(existingUser.getUsername(), roleList);
+                Map<String, Object> refreshTokenObject = jwtTokenService.generateRefreshToken();
+                if (accessTokenObject == null) {
                     return utilityService.entityResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR, new JsonResponse(INTERNAL_ERROR_CODE, INTERNAL_MESSAGE_CODE, UNABLE_CREATE_TOKEN_MESSAGE));
                 }
-                return utilityService.entityJwtTokenResponseMessage(HttpStatus.OK, new JwtTokenResponse(SUCCESS_CODE, SUCCESS_MESSAGE_CODE, new JwtData((String) tokenObject.get("token"), (Date) tokenObject.get("expiresIn"))));
+                Token refreshToken = jwtTokenService.recordToken(new Token((String) refreshTokenObject.get("refreshToken"), TokenType.REFRESH_TOKEN, TokenStatus.ACTIVE, (Date) refreshTokenObject.get("expiresIn"), (Date) refreshTokenObject.get("currentTime"), existingUser));
+                if (refreshToken == null) {
+                    return utilityService.entityResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR, new JsonResponse(INTERNAL_ERROR_CODE, INTERNAL_MESSAGE_CODE, UNABLE_CREATE_TOKEN_MESSAGE));
+                }
+                return utilityService.entityJwtTokenResponseMessage(HttpStatus.OK, new JwtTokenResponse(SUCCESS_CODE, SUCCESS_MESSAGE_CODE, new JwtData((String) accessTokenObject.get("token"), refreshToken.getTokenValue(), (Date) accessTokenObject.get("expiresIn"))));
             }
         }
 

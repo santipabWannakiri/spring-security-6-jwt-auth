@@ -6,10 +6,13 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.jwt.auth.model.Token;
+import com.jwt.auth.repository.TokenRepository;
 import com.jwt.auth.service.JwtTokenService;
 import com.jwt.auth.service.UtilityService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -25,22 +28,27 @@ public class JwtTokenServiceImp implements JwtTokenService {
     @Autowired
     private UtilityService utilityService;
 
+    @Autowired
+    private TokenRepository tokenRepository;
+
     @Value("${jwt-auth.secretKey}")
     private String secretKey;
     @Value("${jwt-auth.issuer}")
     private String issuer;
     @Value("${jwt-auth.audience}")
     private String audience;
-    @Value("${jwt-auth.expirationTimeMillis}")
-    private long expirationTimeMillis;
+    @Value("${jwt-auth.accessTokenExpirationTimeMillis}")
+    private long accessTokenExpirationTimeMillis;
 
+    @Value("${jwt-auth.refreshTTokenExpirationTimeMillis}")
+    private long refreshTokenExpirationTimeMillis;
 
     @Override
     public Map<String, Object> generateToken(String userName, List<String> role) {
         Map<String, Object> tokenObject = new HashMap<>();
         String token = null;
         long currentTimeMillis = System.currentTimeMillis();
-        Date expirationDate = new Date(currentTimeMillis + expirationTimeMillis);
+        Date expirationDate = new Date(currentTimeMillis + accessTokenExpirationTimeMillis);
 
         // Set the header values
         Map<String, Object> header = new HashMap<>();
@@ -68,6 +76,24 @@ public class JwtTokenServiceImp implements JwtTokenService {
         tokenObject.put("token", token);
 
         return tokenObject;
+    }
+
+    @Override
+    public Map<String, Object> generateRefreshToken() {
+        String refreshToken = RandomStringUtils.randomAlphanumeric(64);
+        long currentTimeMillis = System.currentTimeMillis();
+        Date expirationDate = new Date(currentTimeMillis + refreshTokenExpirationTimeMillis);
+
+        Map<String, Object> refreshTokenObject = new HashMap<>();
+        refreshTokenObject.put("currentTime", new Date(currentTimeMillis));
+        refreshTokenObject.put("expiresIn", expirationDate);
+        refreshTokenObject.put("refreshToken", refreshToken);
+        return refreshTokenObject;
+    }
+
+    @Override
+    public Token recordToken(Token token) {
+        return  tokenRepository.save(token);
     }
 
     @Override
