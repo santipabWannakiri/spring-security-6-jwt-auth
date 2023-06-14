@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public interface JwtTokenService {
+public interface TokenService {
 
     public Map<String, Object> generateToken(String userName, List<String> role);
 
@@ -19,11 +19,13 @@ public interface JwtTokenService {
 
     public Token recordToken(Token token);
 
+    public Token findRefreshToken(String refreshToken);
+
     public String extractTokenFromRequest(HttpServletRequest request, HttpServletResponse response) throws IOException;
 
     public String getUsernameFromToken(String token);
 
-    public boolean validateToken(String token);
+    public boolean validateAccessToken(String token);
 
     public boolean isTokenExpired(Date expirationDate);
 }

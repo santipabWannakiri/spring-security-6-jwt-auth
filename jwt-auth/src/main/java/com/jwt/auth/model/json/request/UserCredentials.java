@@ -1,4 +1,4 @@
-package com.jwt.auth.model;
+package com.jwt.auth.model.json.request;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;

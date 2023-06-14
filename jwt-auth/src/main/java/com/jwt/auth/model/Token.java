@@ -24,6 +24,9 @@ public class Token {
     @JoinColumn(name = "user_id")
     private User user;
 
+    public Token() {
+    }
+
     public Token(String tokenValue, TokenType tokenType, TokenStatus tokenStatus, Date expirationDate, Date creationTimestamp, User user) {
         this.tokenValue = tokenValue;
         this.tokenType = tokenType;

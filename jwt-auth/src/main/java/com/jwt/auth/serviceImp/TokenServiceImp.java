@@ -8,7 +8,7 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.jwt.auth.model.Token;
 import com.jwt.auth.repository.TokenRepository;
-import com.jwt.auth.service.JwtTokenService;
+import com.jwt.auth.service.TokenService;
 import com.jwt.auth.service.UtilityService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,12 +24,13 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class JwtTokenServiceImp implements JwtTokenService {
+public class TokenServiceImp implements TokenService {
     @Autowired
     private UtilityService utilityService;
 
     @Autowired
     private TokenRepository tokenRepository;
+
 
     @Value("${jwt-auth.secretKey}")
     private String secretKey;
@@ -39,7 +40,6 @@ public class JwtTokenServiceImp implements JwtTokenService {
     private String audience;
     @Value("${jwt-auth.accessTokenExpirationTimeMillis}")
     private long accessTokenExpirationTimeMillis;
-
     @Value("${jwt-auth.refreshTTokenExpirationTimeMillis}")
     private long refreshTokenExpirationTimeMillis;
 
@@ -97,6 +97,11 @@ public class JwtTokenServiceImp implements JwtTokenService {
     }
 
     @Override
+    public Token findRefreshToken(String refreshToken) {
+        return tokenRepository.findByTokenValue(refreshToken);
+    }
+
+    @Override
     public String extractTokenFromRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String authorizationHeader = request.getHeader("Authorization");
         if (authorizationHeader == null) {
@@ -113,7 +118,7 @@ public class JwtTokenServiceImp implements JwtTokenService {
     }
 
     @Override
-    public boolean validateToken(String token) {
+    public boolean validateAccessToken(String token) {
         try {
             //Verify the integrity token
             Algorithm algorithm = Algorithm.HMAC256(secretKey);
@@ -122,15 +127,16 @@ public class JwtTokenServiceImp implements JwtTokenService {
             //Get expire date
             Date expirationDate = jwt.getExpiresAt();
             if (isTokenExpired(expirationDate)) {
-                //Token has expired
-
-                return false;   //False(Invalid-token)
+                //Token has expired or Invalid-token
+                return false;
             }
         } catch (JWTVerificationException exception) {
             return false;
         }
         return true;
     }
+
+
 
     @Override
     public boolean isTokenExpired(Date expirationDate) {

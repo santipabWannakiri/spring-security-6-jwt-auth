@@ -1,7 +1,7 @@
 package com.jwt.auth.configuration;
 
 import com.jwt.auth.model.json.response.JsonResponse;
-import com.jwt.auth.service.JwtTokenService;
+import com.jwt.auth.service.TokenService;
 import com.jwt.auth.service.UtilityService;
 import com.jwt.auth.serviceImp.UserSerivceImp;
 import jakarta.servlet.FilterChain;
@@ -23,7 +23,7 @@ import static com.jwt.auth.constants.ErrorConstants.*;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
-    private JwtTokenService jwtTokenService;
+    private TokenService tokenService;
 
     @Autowired
     private UserSerivceImp userSerivceImp;
@@ -40,20 +40,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        String token = jwtTokenService.extractTokenFromRequest(request,response);
+        String token = tokenService.extractTokenFromRequest(request,response);
 
         if(token == null){
             utilityService.servletResponseMessage(response, 401, new JsonResponse(INVALID_FORMAT_ERROR_CODE, INVALID_FORMAT_MESSAGE_CODE, UNABLE_EXTRACT_TOKEN_MESSAGE));
             return;
         }
 
-        if(jwtTokenService.validateToken(token) == false){
+        if(tokenService.validateAccessToken(token) == false){
             utilityService.servletResponseMessage(response, 400, new JsonResponse(INVALID_FORMAT_ERROR_CODE, INVALID_FORMAT_MESSAGE_CODE, INVALID_OR_EXPIRE_MESSAGE));
             return;
         }
 
         if (SecurityContextHolder.getContext().getAuthentication() == null) {
-            String username = jwtTokenService.getUsernameFromToken(token);
+            String username = tokenService.getUsernameFromToken(token);
             //Load user from DAO
             UserDetails userDetails = userSerivceImp.loadUserByUsername(username);
             //Authenticate process
