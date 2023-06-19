@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.jwt.auth.constants.ErrorConstants.*;
+import static com.jwt.auth.constants.Constants.*;
 
 @RestController
 @RequestMapping("/api/v1/user")
