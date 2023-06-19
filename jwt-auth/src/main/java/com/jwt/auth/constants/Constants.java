@@ -2,13 +2,6 @@ package com.jwt.auth.constants;
 
 public final class Constants {
 
-    private static final String[] SWAGGER_PATHS = {
-            "/swagger-ui.html",
-            "/swagger-ui/**",
-            "/v3/api-docs",
-            "/v3/api-docs/**"
-    };
-
     //SUCCESS
     public static final String SUCCESS_CODE = "0000";
     public static final String SUCCESS_MESSAGE_CODE = "SUCCESS";

@@ -7,6 +7,7 @@ import com.jwt.auth.service.UtilityService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -36,6 +37,15 @@ public class UtilityServiceImp implements UtilityService {
         response.setCharacterEncoding("UTF-8");
         response.getWriter().write(objectMapper.writeValueAsString(responseObject));
         response.flushBuffer();
+    }
+
+    @Override
+    public AntPathRequestMatcher[] getAntMathers(String[] paths) {
+        AntPathRequestMatcher[] matcher = new AntPathRequestMatcher[paths.length];
+        for (int i = 0; i < paths.length; i++) {
+            matcher[i] = new AntPathRequestMatcher(paths[i]);
+        }
+        return matcher;
     }
 
 
