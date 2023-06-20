@@ -44,7 +44,7 @@ public class UserController {
         return "Hello, anonymously !";
     }
 
-    @PostMapping(value = "/reg", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/signup", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<JsonResponse> registerUser(@RequestBody @Valid User userInfo, BindingResult result) {
         if (result.hasErrors()) {
