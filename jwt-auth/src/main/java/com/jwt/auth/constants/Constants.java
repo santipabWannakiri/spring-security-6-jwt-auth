@@ -1,6 +1,7 @@
 package com.jwt.auth.constants;
 
-public final class ErrorConstants {
+public final class Constants {
+
     //SUCCESS
     public static final String SUCCESS_CODE = "0000";
     public static final String SUCCESS_MESSAGE_CODE = "SUCCESS";

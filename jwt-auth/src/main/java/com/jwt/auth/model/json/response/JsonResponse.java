@@ -1,8 +1,10 @@
 package com.jwt.auth.model.json.response;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
+@Schema(name = "Response")
 public class JsonResponse {
 
     private String appResponseCode;

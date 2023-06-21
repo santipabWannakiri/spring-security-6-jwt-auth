@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.jwt.auth.constants.ErrorConstants.*;
+import static com.jwt.auth.constants.Constants.*;
 
 @RestController
 @RequestMapping("/api/v1/user")
@@ -44,7 +44,7 @@ public class UserController {
         return "Hello, anonymously !";
     }
 
-    @PostMapping(value = "/reg", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/signup", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<JsonResponse> registerUser(@RequestBody @Valid User userInfo, BindingResult result) {
         if (result.hasErrors()) {
