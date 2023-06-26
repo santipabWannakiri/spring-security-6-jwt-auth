@@ -45,9 +45,9 @@ public class SecurityConfiguration {
                         .requestMatchers(GET, "/api/v1/management/**").hasAuthority("READ")
                         .requestMatchers(POST, "/api/v1/management/**").hasAuthority("WRITE")
                         .requestMatchers(DELETE, "/api/v1/management/**").hasAuthority("DELETE")
-                        .requestMatchers("/actuator/health/").hasAnyRole("ADMIN", "SUPER_ADMIN")
-                        .requestMatchers("/actuator/beans/").hasAnyRole("SUPER_ADMIN")
-                        .requestMatchers("/actuator/env/").hasAnyRole("SUPER_ADMIN")
+                        .requestMatchers("/actuator/health").hasAnyRole("ADMIN", "SUPER_ADMIN")
+                        .requestMatchers("/actuator/beans").hasAnyRole("SUPER_ADMIN")
+                        .requestMatchers("/actuator/env").hasAnyRole("SUPER_ADMIN")
                         .requestMatchers(utilityService.getAntMathers(PERMIT_PATHS)).permitAll()
                         .anyRequest().denyAll())
                 .headers(headers -> headers.frameOptions(frameOptionsConfig -> frameOptionsConfig.disable()));
