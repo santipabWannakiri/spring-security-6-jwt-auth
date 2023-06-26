@@ -2,7 +2,11 @@ package com.jwt.auth.constants;
 
 public final class Constants {
 
+<<<<<<< HEAD
     //====== SUCCESS ======
+=======
+    //SUCCESS
+>>>>>>> 77f3c4a623f7a71c3e36289f2bbf4a33577e261b
     public static final String SUCCESS_CODE = "0000";
     public static final String SUCCESS_MESSAGE_CODE = "SUCCESS";
     public static final String REGISTER_SUCCESS_MESSAGE = "Registered successfully.";
