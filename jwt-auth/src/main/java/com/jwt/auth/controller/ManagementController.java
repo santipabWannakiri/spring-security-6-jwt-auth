@@ -10,21 +10,18 @@ public class ManagementController {
     @GetMapping("/g")
     @ResponseBody
     public String managementGet() {
-
         return "Hello from GET";
     }
 
     @PostMapping("/p")
     @ResponseBody
     public String managementPost() {
-
         return "Hello from POST";
     }
 
     @DeleteMapping("/d")
     @ResponseBody
     public String managementDelete() {
-
         return "Hello from DELETE";
     }
 

@@ -31,7 +31,6 @@ public class UtilityServiceImp implements UtilityService {
     @Override
     public void servletResponseMessage(HttpServletResponse response, int status, JsonResponse msgResponse) throws IOException {
         JsonResponse responseObject = new JsonResponse(msgResponse);
-
         response.setStatus(status);
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");

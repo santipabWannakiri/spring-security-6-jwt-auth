@@ -25,12 +25,15 @@ import java.util.Map;
 
 @Service
 public class TokenServiceImp implements TokenService {
-    @Autowired
-    private UtilityService utilityService;
 
-    @Autowired
+    private UtilityService utilityService;
     private TokenRepository tokenRepository;
 
+    @Autowired
+    public TokenServiceImp(UtilityService utilityService, TokenRepository tokenRepository) {
+        this.utilityService = utilityService;
+        this.tokenRepository = tokenRepository;
+    }
 
     @Value("${jwt-auth.secretKey}")
     private String secretKey;
@@ -93,7 +96,7 @@ public class TokenServiceImp implements TokenService {
 
     @Override
     public Token recordToken(Token token) {
-        return  tokenRepository.save(token);
+        return tokenRepository.save(token);
     }
 
     @Override
@@ -137,7 +140,6 @@ public class TokenServiceImp implements TokenService {
     }
 
 
-
     @Override
     public boolean isTokenExpired(Date expirationDate) {
         Date currentDate = new Date();
@@ -147,6 +149,4 @@ public class TokenServiceImp implements TokenService {
         }
         return false;
     }
-
-
 }

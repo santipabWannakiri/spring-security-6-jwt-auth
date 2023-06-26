@@ -17,11 +17,14 @@ import static org.springframework.http.HttpMethod.*;
 @EnableWebSecurity
 public class SecurityConfiguration {
 
-    @Autowired
     private JwtAuthenticationFilter JwtAuthenticationFilter;
+    private UtilityService utilityService;
 
     @Autowired
-    private UtilityService utilityService;
+    public SecurityConfiguration(com.jwt.auth.configuration.JwtAuthenticationFilter jwtAuthenticationFilter, UtilityService utilityService) {
+        JwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.utilityService = utilityService;
+    }
 
     private static final String[] PERMIT_PATHS = {
             "/swagger-ui.html",

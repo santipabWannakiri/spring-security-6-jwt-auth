@@ -21,15 +21,16 @@ import static com.jwt.auth.constants.Constants.*;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-
-    @Autowired
     private TokenService tokenService;
-
-    @Autowired
     private UserSerivceImp userSerivceImp;
+    private UtilityService utilityService;
 
     @Autowired
-    private UtilityService utilityService;
+    public JwtAuthenticationFilter(TokenService tokenService, UserSerivceImp userSerivceImp, UtilityService utilityService) {
+        this.tokenService = tokenService;
+        this.userSerivceImp = userSerivceImp;
+        this.utilityService = utilityService;
+    }
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
@@ -60,7 +61,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             //Load user from DAO
             UserDetails userDetails = userSerivceImp.loadUserByUsername(username);
             //Authenticate process
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails,null, userDetails.getAuthorities());
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         } else {
             utilityService.servletResponseMessage(response, 500, new JsonResponse(INTERNAL_ERROR_CODE, INTERNAL_MESSAGE_CODE, UNABLE_TO_PROCESS_MESSAGE));

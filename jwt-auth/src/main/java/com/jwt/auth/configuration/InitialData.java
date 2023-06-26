@@ -13,20 +13,22 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Set;
+
 @Service
 @Transactional //ACID
 public class InitialData implements CommandLineRunner {
-
-    @Autowired
     private BCryptPasswordEncoder passwordEncoder;
-    @Autowired
     private RoleRepository roleRepository;
-
-    @Autowired
     private PrivilegeRepository privilegeRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    public InitialData(BCryptPasswordEncoder passwordEncoder, RoleRepository roleRepository, PrivilegeRepository privilegeRepository, UserRepository userRepository) {
+        this.passwordEncoder = passwordEncoder;
+        this.roleRepository = roleRepository;
+        this.privilegeRepository = privilegeRepository;
+        this.userRepository = userRepository;
+    }
 
     @Override
     public void run(String... args) throws Exception {

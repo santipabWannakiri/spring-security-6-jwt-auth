@@ -22,11 +22,14 @@ import java.util.Set;
 @Service
 public class UserSerivceImp implements UserService, UserDetailsService {
 
-    @Autowired
     private UserRepository userRepository;
-    @Autowired
     private RoleRepository roleRepository;
 
+    @Autowired
+    public UserSerivceImp(UserRepository userRepository, RoleRepository roleRepository) {
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+    }
 
     @Override
     public User findByUser(String userName) {
@@ -43,19 +46,16 @@ public class UserSerivceImp implements UserService, UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username);
         Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
-
         if (user == null) {
             throw new UsernameNotFoundException("User not found!");
         }
         Set<Role> roles = user.getRoles();
         Set<Privilege> privileges = new HashSet<>();
-
         for (Role role : roles) {
             Set<Privilege> rolePrivileges = role.getPrivileges();
             privileges.addAll(rolePrivileges);
             grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName()));
         }
-
         for (Privilege privilege : privileges) {
             grantedAuthorities.add(new SimpleGrantedAuthority(privilege.getName()));
         }
