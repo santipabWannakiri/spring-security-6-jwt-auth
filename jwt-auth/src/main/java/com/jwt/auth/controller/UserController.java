@@ -15,27 +15,34 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.jwt.auth.constants.ErrorConstants.*;
+import static com.jwt.auth.constants.Constants.*;
 
 @RestController
 @RequestMapping("/api/v1/user")
 public class UserController {
 
-    @Autowired
     private UserService userService;
 
-    @Autowired
     private UtilityService utilityService;
 
-    @Autowired
     private TokenService tokenService;
 
+    private BCryptPasswordEncoder passwordEncoder;
+
+    @Autowired
+    public UserController(UserService userService, UtilityService utilityService, TokenService tokenService, BCryptPasswordEncoder passwordEncoder) {
+        this.userService = userService;
+        this.utilityService = utilityService;
+        this.tokenService = tokenService;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @GetMapping("/public")
     @ResponseBody
@@ -44,7 +51,7 @@ public class UserController {
         return "Hello, anonymously !";
     }
 
-    @PostMapping(value = "/reg", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/signup", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<JsonResponse> registerUser(@RequestBody @Valid User userInfo, BindingResult result) {
         if (result.hasErrors()) {
@@ -53,7 +60,7 @@ public class UserController {
         } else {
             User existingUser = userService.findByUser(userInfo.getUsername());
             if (existingUser != null) {
-                return utilityService.entityResponseMessage(HttpStatus.CONFLICT, new JsonResponse(USER_NOT_FOUND_ERROR_CODE, USER_NOT_FOUND_MESSAGE_CODE, USER_NOT_FOUND_MESSAGE));
+                return utilityService.entityResponseMessage(HttpStatus.CONFLICT, new JsonResponse(USER_DUPLICATE_ERROR_CODE, USER_DUPLICATE_MESSAGE_CODE, USER_DUPLICATE_MESSAGE));
             } else {
                 User createdUser = userService.createUser(userInfo);
                 if (createdUser != null) {
@@ -77,7 +84,9 @@ public class UserController {
         if (existingUser == null) {
             return utilityService.entityResponseMessage(HttpStatus.CONFLICT, new JsonResponse(USER_NOT_FOUND_ERROR_CODE, USER_NOT_FOUND_MESSAGE_CODE, USER_NOT_FOUND_MESSAGE));
         }
-
+        if (!passwordEncoder.matches(credentials.getPassword(), existingUser.getPassword())) {
+            return utilityService.entityResponseMessage(HttpStatus.CONFLICT, new JsonResponse(PASSWORD_INCORRECT_ERROR_CODE, PASSWORD_INCORRECT_MESSAGE_CODE, PASSWORD_INCORRECT_MESSAGE));
+        }
         return processUser(existingUser);
     }
 
