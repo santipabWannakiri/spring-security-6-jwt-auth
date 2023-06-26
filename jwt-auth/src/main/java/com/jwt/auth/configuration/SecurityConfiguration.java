@@ -10,6 +10,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
 import static org.springframework.http.HttpMethod.*;
 
 @Configuration
@@ -34,23 +35,20 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-       http.csrf((csrf) -> csrf.disable());
+        http.csrf((csrf) -> csrf.disable());
         http.sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests((authorize) -> authorize
                         //Sequence of Matchers is important; it requires checking privilege before role.
                         .requestMatchers(GET, "/api/v1/management/**").hasAuthority("READ")
                         .requestMatchers(POST, "/api/v1/management/**").hasAuthority("WRITE")
                         .requestMatchers(DELETE, "/api/v1/management/**").hasAuthority("DELETE")
+                        .requestMatchers("/actuator/health/").hasAnyRole("ADMIN", "SUPER_ADMIN")
+                        .requestMatchers("/actuator/beans/").hasAnyRole("SUPER_ADMIN")
+                        .requestMatchers("/actuator/env/").hasAnyRole("SUPER_ADMIN")
                         .requestMatchers(utilityService.getAntMathers(PERMIT_PATHS)).permitAll()
-                        //.requestMatchers(new AntPathRequestMatcher("/h2/**"), new AntPathRequestMatcher("/api/v1/user/**")).permitAll() //Spring security 6.0.3 --> requestMatchers not working with /h2 path
-                        .requestMatchers("/api/v1/management/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
-/*                      .requestMatchers("/api/user").access(AuthorizationManagers.anyOf(AuthorityAuthorizationManager.hasRole("ADMIN"), AuthorityAuthorizationManager.hasRole("USER")))
-                        .requestMatchers("/api/super").access(AuthorizationManagers.allOf(AuthorityAuthorizationManager.hasRole("ADMIN"), AuthorityAuthorizationManager.hasRole("SUPER_ADMIN")))
-                        .requestMatchers("/api/admin").hasRole("ADMIN")*/
                         .anyRequest().denyAll())
                 .headers(headers -> headers.frameOptions(frameOptionsConfig -> frameOptionsConfig.disable()));
-                http.addFilterBefore(JwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-                //.httpBasic(Customizer.withDefaults());
+        http.addFilterBefore(JwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 

@@ -36,8 +36,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String path = request.getServletPath();
         return path.startsWith("/api/v1/user/")
                 || path.equals("/h2")
-                || path.equals("/actuator")
-                || path.startsWith("/actuator/")
+                || path.equals("/actuator/info")
+                //|| path.startsWith("/actuator/")
                 || path.equals("/favicon.ico")
                 || path.startsWith("/swagger-ui/")
                 || path.equals("/v3/api-docs/swagger-config")
@@ -60,7 +60,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             //Load user from DAO
             UserDetails userDetails = userSerivceImp.loadUserByUsername(username);
             //Authenticate process
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails,null, userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         } else {
             utilityService.servletResponseMessage(response, 500, new JsonResponse(INTERNAL_ERROR_CODE, INTERNAL_MESSAGE_CODE, UNABLE_TO_PROCESS_MESSAGE));
