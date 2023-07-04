@@ -11,6 +11,7 @@ import com.jwt.auth.service.TokenService;
 import com.jwt.auth.service.UserService;
 import com.jwt.auth.service.UtilityService;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -26,6 +27,7 @@ import static com.jwt.auth.constants.Constants.*;
 
 @RestController
 @RequestMapping("/api/v1/user")
+@Slf4j
 public class UserController {
 
     private UserService userService;
@@ -73,13 +75,16 @@ public class UserController {
     public ResponseEntity<?> login(@RequestBody @Valid UserCredentials credentials, BindingResult result) {
         if (result.hasErrors()) {
             List<String> errorMessages = result.getFieldErrors().stream().map(error -> error.getField() + " : " + error.getDefaultMessage()).collect(Collectors.toList());
+            log.error("/login-->INVALID_FORMAT  ( \""+errorMessages.get(0)+"\")");
             return utilityService.entityResponseMessage(HttpStatus.BAD_REQUEST, new JsonResponse(INVALID_FORMAT_ERROR_CODE, INVALID_FORMAT_MESSAGE_CODE, errorMessages.get(0)));
         }
         User existingUser = userService.findByUser(credentials.getUsername());
         if (existingUser == null) {
+            log.error("/login-->USER_NOT_FOUND  (User: \""+credentials.getUsername()+"\" not found)");
             return utilityService.entityResponseMessage(HttpStatus.CONFLICT, new JsonResponse(USER_NOT_FOUND_ERROR_CODE, USER_NOT_FOUND_MESSAGE_CODE, USER_NOT_FOUND_MESSAGE));
         }
         if (!passwordEncoder.matches(credentials.getPassword(), existingUser.getPassword())) {
+            log.error("/login-->PASSWORD_INCORRECT  (User: \""+credentials.getUsername()+"\" password incorrect)");
             return utilityService.entityResponseMessage(HttpStatus.CONFLICT, new JsonResponse(PASSWORD_INCORRECT_ERROR_CODE, PASSWORD_INCORRECT_MESSAGE_CODE, PASSWORD_INCORRECT_MESSAGE));
         }
         return processUser(existingUser);
