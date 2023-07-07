@@ -1,6 +1,6 @@
 package com.jwt.auth.configuration;
 
-import com.jwt.auth.model.json.response.JsonResponse;
+import com.jwt.auth.model.json.response.SuccessJsonResponse;
 import com.jwt.auth.service.TokenService;
 import com.jwt.auth.service.UtilityService;
 import com.jwt.auth.serviceImp.UserSerivceImp;
@@ -49,11 +49,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token = tokenService.extractTokenFromRequest(request, response);
         if (token == null) {
-            utilityService.servletResponseMessage(response, 401, new JsonResponse(INVALID_FORMAT_ERROR_CODE, INVALID_FORMAT_MESSAGE_CODE, UNABLE_EXTRACT_TOKEN_MESSAGE));
+            utilityService.servletResponseMessage(response, 401, new SuccessJsonResponse(INVALID_FORMAT_ERROR_CODE, INVALID_FORMAT_MESSAGE_CODE, UNABLE_EXTRACT_TOKEN_MESSAGE));
             return;
         }
         if (tokenService.validateAccessToken(token) == false) {
-            utilityService.servletResponseMessage(response, 400, new JsonResponse(INVALID_FORMAT_ERROR_CODE, INVALID_FORMAT_MESSAGE_CODE, INVALID_OR_EXPIRE_MESSAGE));
+            utilityService.servletResponseMessage(response, 400, new SuccessJsonResponse(INVALID_FORMAT_ERROR_CODE, INVALID_FORMAT_MESSAGE_CODE, INVALID_OR_EXPIRE_MESSAGE));
             return;
         }
         if (SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -64,7 +64,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         } else {
-            utilityService.servletResponseMessage(response, 500, new JsonResponse(INTERNAL_ERROR_CODE, INTERNAL_MESSAGE_CODE, UNABLE_TO_PROCESS_MESSAGE));
+            utilityService.servletResponseMessage(response, 500, new SuccessJsonResponse(INTERNAL_ERROR_CODE, INTERNAL_MESSAGE_CODE, UNABLE_TO_PROCESS_MESSAGE));
             return;
         }
         filterChain.doFilter(request, response);
