@@ -5,21 +5,21 @@ import lombok.Data;
 
 @Data
 @Schema(name = "Response")
-public class SuccessJsonResponse {
+public class GenericResponse {
 
     private String appResponseCode;
     private String appMessageCode;
     private String description;
 
-    public SuccessJsonResponse() {
+    public GenericResponse() {
     }
-    public SuccessJsonResponse(String appResponseCode, String appMessageCode, String description) {
+    public GenericResponse(String appResponseCode, String appMessageCode, String description) {
         this.appResponseCode = appResponseCode;
         this.appMessageCode = appMessageCode;
         this.description = description;
     }
 
-    public SuccessJsonResponse(SuccessJsonResponse msgResponse) {
+    public GenericResponse(GenericResponse msgResponse) {
         this.appResponseCode = msgResponse.appResponseCode;
         this.appMessageCode = msgResponse.appMessageCode;
         this.description = msgResponse.description;

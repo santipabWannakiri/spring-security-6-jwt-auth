@@ -1,7 +1,7 @@
 package com.jwt.auth.serviceImp;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jwt.auth.model.json.response.SuccessJsonResponse;
+import com.jwt.auth.model.json.response.GenericResponse;
 import com.jwt.auth.model.json.response.JwtTokenResponse;
 import com.jwt.auth.service.UtilityService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -22,8 +22,8 @@ public class UtilityServiceImp implements UtilityService {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public ResponseEntity<SuccessJsonResponse> responseSuccess(String message){
-        SuccessJsonResponse response = new SuccessJsonResponse();
+    public ResponseEntity<GenericResponse> responseSuccess(String message){
+        GenericResponse response = new GenericResponse();
         response.setAppResponseCode(SUCCESS_CODE);
         response.setAppMessageCode(SUCCESS_MESSAGE_CODE);
         response.setDescription(message);
@@ -37,8 +37,8 @@ public class UtilityServiceImp implements UtilityService {
     }
 
     @Override
-    public void servletResponseMessage(HttpServletResponse response, int status, SuccessJsonResponse msgResponse) throws IOException {
-        SuccessJsonResponse responseObject = new SuccessJsonResponse(msgResponse);
+    public void servletResponseMessage(HttpServletResponse response, int status, GenericResponse msgResponse) throws IOException {
+        GenericResponse responseObject = new GenericResponse(msgResponse);
         response.setStatus(status);
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");

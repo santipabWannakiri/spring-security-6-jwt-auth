@@ -5,6 +5,7 @@ import com.jwt.auth.exception.type.*;
 import com.jwt.auth.model.*;
 import com.jwt.auth.model.json.request.RefreshToken;
 import com.jwt.auth.model.json.request.UserCredentials;
+import com.jwt.auth.model.json.response.GenericResponse;
 import com.jwt.auth.model.json.response.SuccessJsonResponse;
 import com.jwt.auth.model.json.response.JwtData;
 import com.jwt.auth.model.json.response.JwtTokenResponse;
@@ -50,7 +51,7 @@ public class UserController {
 
     @PostMapping(value = "/signup", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<SuccessJsonResponse> registerUser(@RequestBody @Valid User userInfo, BindingResult result) {
+    public ResponseEntity<GenericResponse> registerUser(@RequestBody @Valid User userInfo, BindingResult result) {
         if (result.hasErrors()) {
             List<String> errorMessages = result.getFieldErrors().stream().map(error -> error.getField() + ": " + error.getDefaultMessage()).collect(Collectors.toList());
             throw new InvalidFormatException(errorMessages.get(0));

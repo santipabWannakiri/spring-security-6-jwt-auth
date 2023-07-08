@@ -1,6 +1,6 @@
 package com.jwt.auth.service;
 
-import com.jwt.auth.model.json.response.SuccessJsonResponse;
+import com.jwt.auth.model.json.response.GenericResponse;
 import com.jwt.auth.model.json.response.JwtTokenResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatusCode;
@@ -11,11 +11,11 @@ import java.io.IOException;
 
 public interface UtilityService {
 
-    public ResponseEntity<SuccessJsonResponse> responseSuccess(String Message);
+    public ResponseEntity<GenericResponse> responseSuccess(String Message);
 
     public ResponseEntity<JwtTokenResponse> entityJwtTokenResponseMessage(HttpStatusCode status, JwtTokenResponse response);
 
-    public void servletResponseMessage(HttpServletResponse response, int status, SuccessJsonResponse msgResponse) throws IOException;
+    public void servletResponseMessage(HttpServletResponse response, int status, GenericResponse msgResponse) throws IOException;
 
     public AntPathRequestMatcher[] getAntMathers(String[] paths);
 }
