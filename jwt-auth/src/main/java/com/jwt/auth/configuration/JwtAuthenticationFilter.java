@@ -1,7 +1,6 @@
 package com.jwt.auth.configuration;
 
 import com.jwt.auth.model.json.response.GenericResponse;
-import com.jwt.auth.model.json.response.SuccessJsonResponse;
 import com.jwt.auth.service.TokenService;
 import com.jwt.auth.service.UtilityService;
 import com.jwt.auth.serviceImp.UserSerivceImp;

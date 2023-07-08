@@ -6,7 +6,6 @@ import com.jwt.auth.model.*;
 import com.jwt.auth.model.json.request.RefreshToken;
 import com.jwt.auth.model.json.request.UserCredentials;
 import com.jwt.auth.model.json.response.GenericResponse;
-import com.jwt.auth.model.json.response.SuccessJsonResponse;
 import com.jwt.auth.model.json.response.JwtData;
 import com.jwt.auth.model.json.response.JwtTokenResponse;
 import com.jwt.auth.service.TokenService;
