@@ -12,6 +12,7 @@ import com.jwt.auth.service.TokenService;
 import com.jwt.auth.service.UserService;
 import com.jwt.auth.service.UtilityService;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -27,6 +28,7 @@ import static com.jwt.auth.constants.Constants.*;
 
 @RestController
 @RequestMapping("/api/v1/user")
+@Slf4j
 public class UserController {
 
     private UserService userService;
