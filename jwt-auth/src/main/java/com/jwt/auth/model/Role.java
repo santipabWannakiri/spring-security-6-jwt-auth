@@ -17,4 +17,13 @@ public class Role {
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "role_privileges", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "privilege_id"))
     private Set<Privilege> privileges;
+
+    public Role() {
+    }
+
+    public Role(Long id, String name, Set<Privilege> privileges) {
+        this.id = id;
+        this.name = name;
+        this.privileges = privileges;
+    }
 }

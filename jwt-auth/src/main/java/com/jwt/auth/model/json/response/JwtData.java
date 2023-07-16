@@ -10,6 +10,8 @@ public class JwtData {
     private Date expiresIn;
     private String refreshToken;
 
+    public JwtData() {
+    }
 
     public JwtData(String token, String refreshToken, Date expiresIn) {
         this.token = token;

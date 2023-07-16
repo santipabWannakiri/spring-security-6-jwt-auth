@@ -38,4 +38,18 @@ public class User {
 
     @JsonIgnore
     private Boolean isActive;
+
+    public User() {
+    }
+
+    public User(Long id, String username, String email, String password, Set<Role> roles, Boolean isActive) {
+        this.id = id;
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.roles = roles;
+        this.isActive = isActive;
+    }
+
+
 }

@@ -11,4 +11,12 @@ public class Privilege {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+
+    public Privilege() {
+    }
+
+    public Privilege(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 }

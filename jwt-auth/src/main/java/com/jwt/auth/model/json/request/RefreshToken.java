@@ -7,4 +7,11 @@ import lombok.Data;
 public class RefreshToken {
     @NotBlank(message = "is mandatory")
     private String refreshToken;
+
+    public RefreshToken() {
+    }
+
+    public RefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
 }

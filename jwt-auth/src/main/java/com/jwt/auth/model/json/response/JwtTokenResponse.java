@@ -8,6 +8,9 @@ public class JwtTokenResponse {
     private String appMessageCode;
     private JwtData jwtData;
 
+    public JwtTokenResponse() {
+    }
+
     public JwtTokenResponse(String appResponseCode, String appMessageCode, JwtData jwtData) {
         this.appResponseCode = appResponseCode;
         this.appMessageCode = appMessageCode;

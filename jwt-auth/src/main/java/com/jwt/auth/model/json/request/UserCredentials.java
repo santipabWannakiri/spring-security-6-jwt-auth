@@ -14,4 +14,11 @@ public class UserCredentials {
     @NotBlank(message = "is mandatory")
     private String password;
 
+    public UserCredentials() {
+    }
+
+    public UserCredentials(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
 }
